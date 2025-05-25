@@ -13,7 +13,7 @@ def insert_data(question, answer):
     session = SessionLocal()
 
     try:
-        new_data = FlashCard(question=question, answer=answer)  # type: ignore
+        new_data = FlashCard(question=question, answer=answer) # type: ignore
         session.add(new_data)
         session.commit()
     except:
@@ -35,6 +35,89 @@ def get_data():
     finally:
         session.close()
 
+
+def delete_flashcard(question):
+    """
+    删除数据
+    """
+    #  创建一个会话
+    session = SessionLocal()
+
+    try:
+        flash_card = session.query(FlashCard).filter(FlashCard.question == question).first() # type: ignore
+        if flash_card:
+            session.delete(flash_card)
+            session.commit()
+        else:
+            print("Flashcard not found.")
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def edit_flashcard(question):
+    """
+    编辑数据
+    """
+    #  创建一个会话
+    session = SessionLocal()
+
+    try:
+        flash_card = session.query(FlashCard).filter(FlashCard.question == question).first() # type: ignore
+        if flash_card:
+            new_question = input(f"current question: {flash_card.question}\nplease write a new question:\n> ")
+            if new_question:
+                flash_card.question = new_question
+            print()
+            new_answer = input(f"current answer: {flash_card.answer}\nplease write a new answer:\n> ")
+            if new_answer:
+                flash_card.answer = new_answer
+            print()
+            session.commit()
+        else:
+            print("Flashcard not found.")
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def update_flashcards(question):
+    """
+    如果前一步输入 u ，程序应打印以下更新子菜单（4）。
+    press "d" to delete the flashcard:
+    press "e" to edit the flashcard:
+    即 d 删除当前的闪卡， e 选项提供编辑当前闪卡的方式。
+    
+    对于 e 选项 首先，我们需要编辑问题：
+    current question: <question>
+    please write a new question: 
+    问题编辑完成后，继续编辑答案：
+    current answer: <answer>
+    please write a new answer:
+    如果用户将问题或答案字段留空，保持原始问题或答案值不变。
+
+    当用户按错键时，在练习（3）和更新（4）菜单中输出 <wrong key> is not an option 消息
+    程序的其他部分应按前一阶段的方式运行。
+    """
+    while True:
+        print("press \"d\" to delete the flashcard:")
+        print("press \"e\" to edit the flashcard:")
+        choice = input('> ')
+        if choice == 'd':
+            print()
+            delete_flashcard(question)
+            break
+        elif choice == 'e':
+            print()
+            edit_flashcard(question)
+            break
+        else:
+            print(f"{choice} is not an option")
+            continue
 
 
 def add_flashcards():
@@ -81,14 +164,17 @@ def practice_flashcards():
     主菜单（1）中的 Practice flashcards 选项应打印所有已添加的问题和答案。
     如果没有卡片，打印 There is no flashcard to practice! 并返回主菜单（1）
 
-    你的闪卡应该在屏幕上按以下方式显示：
+    在用户从上一阶段输入 Practice flashcards 键后弹出的菜单中添加新功能。我们称之为练习菜单（3）：
     Question: {your question}
-    Please press "y" to see the answer or press "n" to skip:
+    press "y" to see the answer:
+    press "n" to skip:
+    press "u" to update:
 
     如果输入 y ，程序应输出 Answer: {your answer} 并转到下一张闪卡。
     如果没有更多闪卡要显示，则返回主菜单（1）。
     如果输入 n ，则跳转到下一张闪卡。如果没有更多闪卡要显示，则返回主菜单（1）。
-    如果输入错误，输出以下消息： {wrong key} is not an option 。等待正确的输入。
+    如果输入错误，输出以下消息： {wrong key} is not an option 。
+    程序的其他部分应按前一阶段的方式运行。
     """
     flash_cards = get_data()
     if not flash_cards:
@@ -97,14 +183,19 @@ def practice_flashcards():
     else:
         for flash_card in flash_cards:
             print(f"Question: {flash_card.question}")
-            user_input = input('Please press "y" to see the answer or press "n" to skip:\n> ')
-            print()
-            if user_input.lower() == "y":
-                print(f"Answer: {flash_card.answer}\n")
-            elif user_input.lower() == "n" or user_input.lower() == "s":
-                print()
-            else:
-                print(f"{user_input} is not an option\n")
+            while True:
+                user_input = input('press "y" to see the answer:\npress "n" to skip:\npress "u" to update:\n> ')
+                if user_input.lower() == "y":
+                    print(f"Answer: {flash_card.answer}\n")
+                    break
+                elif user_input.lower() == "n":
+                    print()
+                    break
+                elif user_input.lower() == "u":
+                    update_flashcards(flash_card.question)
+                    break
+                else:
+                    print(f"{user_input} is not an option")
         main()
 
 
