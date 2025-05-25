@@ -8,6 +8,8 @@ Work with the SQLAlchemy ORM and an SQLite database to create a tool for memoriz
 
 It would be great to remember anything at any time. Alas, our mental capacity is limited. The good thing is that there are a lot of tools to help us memorize things. In this project, we are going to create a tool for memorizing lines, poems, speeches, and other text-based materials.
 
+![Gif](./250px-Leitner_system_animation.gif)
+
 ## What you'll learn
 
 Once you choose a project, we'll provide you with a study plan that includes all the necessary topics from your course to get it built. Here’s what awaits you:
