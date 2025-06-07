@@ -199,6 +199,7 @@ def add_flashcards():
 
     If input is invalid, output: {wrong key} is not an option, and wait for correct input.
     """
+    print()
     print("1. Add a new flashcard")
     print("2. Exit")
     choice = input("> ")
@@ -274,7 +275,7 @@ def practice_flashcards():
                 if user_input.lower() == "y":
                     print(f"Answer: {flash_card.answer}\n")
                     while True:
-                        user_input = input('press "y" if your answer is correct:\npress "n" if your answer is wrong:\n> ')
+                        user_input = input('press "y" if your answer is correct:\npress "n" if your answer is wrong:\n')
                         if user_input.lower() == "y":
                             flash_card.rep_count += 1
                             edit_flashcard(flash_card.question, rep_count=flash_card.rep_count)
